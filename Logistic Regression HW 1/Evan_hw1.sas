@@ -19,7 +19,7 @@ MM:  p-value < 0.0001 (significant)   odds ratio 2.8503 (2.4949, 3.2562)
 /* ------- check '.'(missing values) ----------------- */
 /* --------------------------------------------------- */
 proc means data=hw1.insurance_t nmiss;
-	var IRA IRABAL LOC LOCBAL INV INVBAL ILS ILSBAL MM;
+	var IRA IRABAL LOC LOCBAL INV INVBAL ILS ILSBAL MM INS;
 run;
 /* Only INV and INVBAL have matching amount of missing values */
 
@@ -72,14 +72,14 @@ ILSBAL: all positive now, use Box Tidwell :)
 
 
 
-/* ------------------- check  --------------------*/
+/* --------------- check Linearity Assumption --------------------*/
 proc means data=hw1.insurance_t;
 	var IRA IRABAL LOC LOCBAL INV INVBAL ILS ILSBAL MM;
 	where IRA = 0 and IRABAL = 0;
 run;
 
-/*--------------------- Check Assumptions for Continuous Vars ---------------------------------*/
-/*------------------------------- IRABAL(GAM)--------------------------*/
+/*------------------ Check Assumptions for Continuous Vars ---------------------------------*/
+/*--------------------------- IRABAL(GAM)--------------------------*/
 proc logistic data=hw1.insurance_t alpha=0.002 plots(only)=(effect oddsratio);
 	model INS(event='1') = IRABAL / clodds=pl clparm=pl;
 run;
@@ -92,10 +92,23 @@ Proc gam data=hw1.insurance_t plots= components(clm commonaxes);
 	model INS(event = "1") = spline(IRABAL) /dist = binomial link = logit;
 	where IRA = 1;
 run;
-
 /* 
-DOES NOT CONVERGE;
-spline(IRABAL) p-value = NA; 
+DOES NOT CONVERGE, has to run Box Tidwell; 
+*/
+
+data ira;
+	set hw1.insurance_t;
+	iralog = IRABAL*log(IRABAL);
+run;
+
+proc logistic data=ira plots(only)=(effect oddsratio);
+	model INS(event='1') = IRABAL iralog / clodds=pl clparm=pl;
+	where IRA = 1;
+run;
+quit;
+/* 
+47 people have 0 balance even though they do have account
+iralog p-value = 0.4556, linearity assumption met; 
 */
 
 /*--------------------------- LOCBAL(GAM)--------------------------*/
@@ -109,11 +122,26 @@ IRABAL: p-value = 0.9106 (insignificant)   Wald chi-sq = 0.0126
 
 Proc gam data=hw1.insurance_t plots= components(clm commonaxes);
 	model INS(event = "1") = spline(LOCBAL, df=4) /dist = binomial link = logit;
+	where LOC = 1;
 run;
 /* 
-DOES NOT CONVERGE!!!
-spline(LOCBAL) p-value = 0.0360; 
-linearity assumption met
+DOES NOT CONVERGE, has to run Box Tidwell; 
+*/
+
+
+data loc;
+	set hw1.insurance_t;
+	loclog = LOCBAL*log(LOCBAL);
+run;
+
+proc logistic data=loc plots(only)=(effect oddsratio);
+	model INS(event='1') = LOCBAL loclog / clodds=pl clparm=pl;
+	where LOC = 1;
+run;
+quit;
+/* 
+56 people have 0 balance even though they do have account
+iralog p-value = 0.2066, linearity assumption met; 
 */
 
 /*--------------------------- INVBAL(GAM)--------------------------*/
@@ -127,12 +155,13 @@ INVBAL: p-value = 0.0393(Insignificant)   Wald chi-sq = 4.2466
 
 Proc gam data=hw1.insurance_t plots= components(clm commonaxes);
 	model INS(event = "1") = spline(INVBAL) /dist = binomial link = logit;
+	where INV = 1;
 run;
 
 /* 
 DOES CONVERGE;
-spline(INVBAL) p-value <.0001;
-Linearity Assumption NOT met 
+spline(INVBAL) p-value = 0.3289; DF=3
+Linearity Assumption met 
 */
 
 
@@ -145,15 +174,24 @@ quit;
 ILSBAL: p-value = 0.0313 (Insignificant)   Wald chi-sq = 4.6349
 ;
 
-Proc gam data=hw1.insurance_t plots= components(clm commonaxes);
-	model INS(event = "1") = spline(ILSBAL) /dist = binomial link = logit;
+data ils;
+	set hw1.insurance_t;
+	ilslog = ILSBAL*log(ILSBAL);
 run;
 
+proc logistic data=ils plots(only)=(effect oddsratio);
+	model INS(event='1') = ILSBAL ilslog / clodds=pl clparm=pl;
+	where ILS = 1;
+run;
+quit;
 /* 
 DOES CONVERGE;
-spline(INVBAL) p-value = 0.0011;
+log p-value = 0.0422;
 Linearity Assumption NOT met 
 */
+
+
+
 
 /*--------------------- Count missing values for all---------------------------------*/
 proc means data=hw1.insurance_t NMISS N; run;
