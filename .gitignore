@@ -5,6 +5,7 @@ __pycache__/
 
 # SAS data files
 .sas7bdat
+.sas~
 
 # C extensions
 *.so
