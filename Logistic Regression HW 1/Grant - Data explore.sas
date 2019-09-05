@@ -1,5 +1,8 @@
 libname hw "C:\Users\grant\Desktop\IAA\Logistic Regression\HW1";
 
+/* Looking at HMOWN LORES HMVAL AGE CRSCORE MOVED INAREA INS  BRANCH RES */
+
+/* Looking at missing variables */
 proc univariate data=hw.insurance_t;
 	var LORES HMVAL AGE CRSCORE;
 run;
@@ -34,7 +37,7 @@ proc logistic data=loreslog;
 run;
 quit;
 
-/* Get wald chisq and p */
+/* Get wald chisq and p value */
 proc logistic data=hw.insurance_t plots(only)=(effect oddsratio);
 	model INS(event='1') = LORES / clodds=pl clparm=pl;
 run;
@@ -51,6 +54,7 @@ proc logistic data=hmvallog;
 run;
 quit;
 
+/* Get wald chisq and p value */
 proc logistic data=hw.insurance_t plots(only) = (effect oddsratio);
 	model INS(event='1') = HMVAL / clodds=pl clparm=pl;
 run; quit;
@@ -68,6 +72,7 @@ proc logistic data=agelog;
 run;
 quit;
 
+/* Get wald chisq and p value */
 proc logistic data=hw.insurance_t plots(only) = (effect oddsratio);
 	model INS(event='1') = AGE / clodds=pl clparm=pl;
 run; quit;
@@ -85,6 +90,7 @@ proc logistic data=crlog;
 run;
 quit;
 
+/* Get wald chisq and p value */
 proc logistic data=hw.insurance_t plots(only) = (effect oddsratio);
 	model INS(event='1') = CRSCORE / clodds=pl clparm=pl;
 run; quit;
@@ -95,4 +101,3 @@ run; quit;
 proc freq data=hw.insurance_t;
 	tables (BRANCH RES)*INS / chisq;
 run;
-
