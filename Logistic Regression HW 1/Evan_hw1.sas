@@ -196,5 +196,5 @@ Linearity Assumption NOT met
 /*--------------------- Count missing values for all---------------------------------*/
 proc means data=hw1.insurance_t NMISS N; run;
 
-
+	
 
