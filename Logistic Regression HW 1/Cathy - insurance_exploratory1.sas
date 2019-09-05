@@ -49,20 +49,6 @@ proc freq data=ins.insurance_t;
 	exact fisher ;
 run;
 
-proc freq data=ins.insurance_t;
-    tables mmcred * ins/ chisq measures cl;
-run;
-
-proc freq data=ins.insurance_t;
-    tables mmcred * ins/ exact chisq measures ;
-run;
-*Uses ref=0 as reference level;
-proc logistic data=ins.insurance_t alpha=0.002
-              plots(only)=(effect oddsratio);
-	class mmcred(ref='0') /param=ref;
-	model Ins(event='1')=mmcred / clodds=pl clparm=pl;
-run;
-
 *No reference level;
 proc logistic data=ins.insurance_t alpha=0.002
               plots(only)=(effect oddsratio);
@@ -185,7 +171,6 @@ quit;
 
 proc freq data=ins.insurance_t;
     tables ccpurc * ins / chisq measures cl;
-    format ins insfmt.;
 run;
 
 *have to run proc logistic to get the confidence limits;
@@ -229,33 +214,7 @@ run;
 quit;
 
 
-
-
-
-/*export file to Excel*/
-proc export data=ins.insurance_t 
-	dbms=csv
-	outfile="\\vmware-host\Shared Folders\Documents\Logistic Regression\Homework1_LR\book1.csv"
-	replace;
-run;
-
-/* Setting Format for Target Variable */
-proc format;
-    value insfmt 1 = "Yes Insurance"
-                   0 = "No Insurance";
-	value ccbalfmt low-0 = "negative balance" 
-			0-100="0- 100"
-			100-200="100-200"
-			200-300="200-300"
-			300-400="300-400"
-			400-high=">400"	;
-	value mtgbalfmt 0-50000="0-50k"
-			50000-100000="50k - 100k"
-			100000-150000="100k-150k"
-			150000-200000="150k-200k"
-			200000-high=">200k"
-;
-run;
+/*Data Exploration*/
 
 *Examining Missing values;
 proc freq data=ins.insurance_t ;
