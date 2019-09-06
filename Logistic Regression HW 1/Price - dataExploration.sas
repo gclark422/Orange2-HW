@@ -26,6 +26,11 @@ model ins(event='1') = spline(phone, df=4)
 / dist = binomial link = logit;
 run;
 
+/*significance*/
+proc logistic data=logist1.insurance_t plots(only)=(oddsratio);
+	model ins(event='1') = phone / clodds=pl clparm=pl;
+run;
+
 /*---------------------exploring teller variable---------------------*/
 proc freq data = logist1.insurance_t;
 tables teller;
@@ -49,6 +54,11 @@ proc gam data=logist1.insurance_t
 plots = components(clm commonaxes);
 model ins(event='1') = spline(teller, df=4)
 / dist = binomial link = logit;
+run;
+
+/*significance*/
+proc logistic data=logist1.insurance_t plots(only)=(oddsratio);
+	model ins(event='1') = teller / clodds=pl clparm=pl;
 run;
 
 /*------------------exploring sav variable-------------------------*/
@@ -87,6 +97,11 @@ clodds=pl clparm=pl;
 where sav = 1;
 run;
 quit;
+
+proc logistic data=logist1.insurance_t plots(only)=(oddsratio);
+	model ins(event='1') = savbal / clodds=pl clparm=pl;
+	where sav = 1;
+run;
 
 /*--------------------------exploring atm variable-----------------------*/
 proc freq data = logist1.insurance_t;
@@ -132,6 +147,12 @@ clodds=pl clparm=pl;
 run;
 quit;
 
+/*significance*/
+proc logistic data=logist1.insurance_t plots(only)=(oddsratio);
+	model ins(event='1') = atmamt / clodds=pl clparm=pl;
+	where atm = 1;
+run;
+
 /*----------------------exploring pos variable-----------------------*/
 proc freq data = logist1.insurance_t;
 tables pos;
@@ -156,7 +177,10 @@ proc logistic data=logist1.insurance_t alpha=0.05
  model ins(event='1')=pos / clodds=pl;
 run;
 
-
+/*significance*/
+proc logistic data=logist1.insurance_t plots(only)=(oddsratio);
+	model ins(event='1') = pos / clodds=pl clparm=pl;
+run;
 
 /*------------------exploring posamt variable----------------*/
 proc freq data = logist1.insurance_t;
@@ -178,6 +202,11 @@ where pos >=1;
 run;
 quit;
 
+/*significance*/
+proc logistic data=logist1.insurance_t plots(only)=(oddsratio);
+	model ins(event='1') = teller / clodds=pl clparm=pl;
+	where pos >= 1;
+run;
 
 /*-------------------------exploring cd variable------------------*/
 proc freq data = logist1.insurance_t;
@@ -214,3 +243,9 @@ clodds=pl clparm=pl;
 where cd = 1;
 run;
 quit;
+
+/*significance*/
+proc logistic data=logist1.insurance_t plots(only)=(oddsratio);
+	model ins(event='1') = cdbal / clodds=pl clparm=pl;
+	where cd = 1;
+run;
