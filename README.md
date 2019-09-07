@@ -36,7 +36,7 @@ Fall 1 Orange 2 HW repo
  Then you can push :)
  
  # 2 useful command line commands
- `cd` - This means 'change directory. Used as follows:
+ `cd` - This means 'change directory'. Used as follows:
  ```
  cd [path or sub directory]
  ```
@@ -50,7 +50,7 @@ Fall 1 Orange 2 HW repo
  cd ..
  ```
  ____
- `ls` - The list command. This will list contents of a directory
+ `ls` - The 'list' command. This will list contents of a directory
  Example:
  ```
  ls -al
