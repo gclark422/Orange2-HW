@@ -41,10 +41,10 @@ decomp_stl <- stl(ts.months.train, s.window=7)
 plot(decomp_stl)
 
 # ESM
-LES.data <- holt(ts.months.train, inital="optimal", h=24)
+LES.data <- holt(ts.months.train, inital="optimal", h=6)
 summary(LES.data)
 
-LDES.data <- holt(ts.months.train, inital="optimal", h=24, damped = TRUE)
+LDES.data <- holt(ts.months.train, inital="optimal", h=6, damped = TRUE)
 summary(LDES.data)
 plot(LDES.data)
 
