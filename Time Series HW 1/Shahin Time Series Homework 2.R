@@ -43,12 +43,14 @@ data.train <- dd.agg[dd.agg$date <= "2018-06-1",]
 
 data.valid <- dd.agg[dd.agg$date > "2018-06-01",]
 
-View(data.train)
+View(data.valid)
 
 # Creating Time Series Data Objects #
 Daily_Mean_Train <- ts(data.train$hw2.Daily.Mean.PM2.5.Concentration, start = 2014, frequency = 12)
 
 Daily_Mean_Valid <- ts(data.valid$hw2.Daily.Mean.PM2.5.Concentration, start = 2018, frequency = 12)
+
+View(Daily_Mean_Valid)
 
 # STL Decomposition
 decomp_stl <- stl(Daily_Mean_Train, s.window = 7)
@@ -67,11 +69,53 @@ lines(seas_pass, col = "red", lwd = 2)
 monthplot(decomp_stl$time.series[,"seasonal"], main = "PM2.5 - Monthly Effects", ylab = "Seasonal Sub Series", xlab = "Seasons (Months)", lwd = 2)
 
 
-#Holt-Winters ESM
-HWES.PM <- hw(Daily_Mean_Train, seasonal = "additive")
-summary(HWES.PM)
+# Holt-Winters Additive ESM
+HWES_PA <- hw(Daily_Mean_Train, seasonal = "additive")
+train_results <- forecast(HWES_PA, h=6)
+summary(HWES_PA)
+
+View(train_results)
+View(Daily_Mean_Valid)
+
+plot(HWES.PA, main = "PM2.5 with Holt-Winters ESM Forecast", xlab = "Date", ylab = "PM2.5")
+
+autoplot(HWES.PA)+ autolayer(fitted(HWES.PA),series="Fitted")+ylab("PM2.5 with Holt-Winters ESM Forecast")
+
+# Running MAPE on the Validation Data Set
+
+DMV <- unclass(Daily_Mean_Valid)
+TRM <- unclass(train_results$mean)
+error = DMV - TRM
+MAE=mean(abs(error))
+MAPE=mean(abs(error)/abs(DMV))
+
+print(MAE)    #2.25
+print(MAPE)   #22.85%
+
+
+
+
+# Holt-Winters Multipliciative ESM
+
+HWES_PM <- hw(Daily_Mean_Train, seasonal = "multiplicative")
+train_results <- forecast(HWES_PM, h=6)
+summary(HWES_PM)
+
+View(train_results)
+View(Daily_Mean_Valid)
 
 plot(HWES.PM, main = "PM2.5 with Holt-Winters ESM Forecast", xlab = "Date", ylab = "PM2.5")
 
-autoplot(HWES.PM)+
-  autolayer(fitted(HWES.PM),series="Fitted")+ylab("PM2.5 with Holt-Winters ESM Forecast")
+autoplot(HWES.PM)+ autolayer(fitted(HWES.PM),series="Fitted")+ylab("PM2.5 with Holt-Winters ESM Forecast")
+
+
+# Running MAPE on the Validation Data Set
+
+DMV <- unclass(Daily_Mean_Valid)
+TRM <- unclass(train_results$mean)
+error = DMV - TRM
+MAE=mean(abs(error))
+MAPE=mean(abs(error)/abs(DMV))
+
+print(MAE)   # 2.029
+print(MAPE)  # 20.90%
