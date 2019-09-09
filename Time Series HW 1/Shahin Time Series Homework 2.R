@@ -67,17 +67,6 @@ lines(seas_pass, col = "red", lwd = 2)
 monthplot(decomp_stl$time.series[,"seasonal"], main = "PM2.5 - Monthly Effects", ylab = "Seasonal Sub Series", xlab = "Seasons (Months)", lwd = 2)
 
 
-# Building a Single Exponential Smoothing Model - Steel Data #
-SES.Train <- ses(Daily_Mean_Train, initial = "optimal", h = 0)
-summary(SES.Train)
-
-plot(SES.Train, main = "Mean PM2.5 Simple ESM Forecast", xlab = "Date", ylab = "PM2.5")
-round(accuracy(SES.Train),2)
-
-autoplot(SES.Train)+
-  autolayer(fitted(SES.Train),series="Fitted")+ylab("PM2.5 with Holt-Winters ESM Forecast")
-
-
 #Holt-Winters ESM
 HWES.PM <- hw(Daily_Mean_Train, seasonal = "additive")
 summary(HWES.PM)
