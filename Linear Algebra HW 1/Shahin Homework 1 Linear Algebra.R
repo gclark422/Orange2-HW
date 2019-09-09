@@ -21,5 +21,5 @@ plot(leuk[,randomColumns],col = leuk$V5001)
 pcaOut = prcomp(leuk[,1:5000],3, scale = F)
 plot(pcaOut$x[,1],pcaOut$x[,2],col = leuk$V5001, xlab = "Principal Component 1", ylab = "Principal Component 2", main = 'Genetic Samples Projected into 2-dimensions')
 
-# Observation 22 is misclassified as...green?
+# Observation 19 is misclassified a AML(Green). Should be ALL-T (Red).
 text(pcaOut$x[,1], pcaOut$x[,2], labels=(as.numeric(rownames(leuk))), data=leuk, cex=0.5, font=2)
