@@ -23,3 +23,5 @@ plot(pcaOut$x[,1],pcaOut$x[,2],col = leuk$V5001, xlab = "Principal Component 1",
 
 # Observation 19 is misclassified a AML(Green). Should be ALL-T (Red).
 text(pcaOut$x[,1], pcaOut$x[,2], labels=(as.numeric(rownames(leuk))), data=leuk, cex=0.5, font=2)
+
+legend(40000, -13000, legend = c("AML", "ALL-T", "ALL_B"), col=c("green", "red", "black"), lty=1:2, cex=0.7)
