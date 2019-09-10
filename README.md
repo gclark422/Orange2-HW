@@ -1,6 +1,17 @@
 # Orange2-HW
 Fall 1 Orange 2 HW repo
 
+## Current assignments:
+
+| Done?                    | Assignment               | Due Date |
+|--------------------------|--------------------------|----------|
+| :heavy_check_mark:       | Logistic Regression HW 1 |          |
+| :heavy_multiplication_x: | Logistic Regression HW 2 | 9/18     |
+| :heavy_multiplication_x: | Logistic Regression HW 3 | 9/26     |
+| :heavy_multiplication_x: | Time Series HW 1         | 9/16     |
+| :heavy_multiplication_x: | Time Series HW 2         | 9/24     |
+| :heavy_multiplication_x: | Linear Algebra HW 1      | 9/13     |
+
 # Basic Setup Instructions (Command line - Use Git Bash)
  - After being added as a collaborator, clone the repo where you want it
  ```
@@ -25,7 +36,7 @@ Fall 1 Orange 2 HW repo
  Then you can push :)
  
  # 2 useful command line commands
- `cd` - This means 'change directory. Used as follows:
+ `cd` - This means 'change directory'. Used as follows:
  ```
  cd [path or sub directory]
  ```
@@ -39,7 +50,7 @@ Fall 1 Orange 2 HW repo
  cd ..
  ```
  ____
- `ls` - The list command. This will list contents of a directory
+ `ls` - The 'list' command. This will list contents of a directory
  Example:
  ```
  ls -al
