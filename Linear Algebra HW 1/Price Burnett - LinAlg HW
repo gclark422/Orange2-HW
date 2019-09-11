@@ -1,0 +1,34 @@
+# Load Libraries
+# Needed Libraries for Analysis #
+library(haven)
+library(forecast)
+library(fma)
+library(tseries)
+library(expsmooth)
+library(lmtest)
+library(zoo)
+library(ggplot2)
+
+# Linear Algebra HW Assignment 
+
+# Load Data
+load("C:/Users/Price Burnett/Downloads/LeukError.RData")
+table(leuk$V5001)
+View(leuk)
+
+#Select Color Palette
+library(RColorBrewer)
+display.brewer.all()
+palette(brewer.pal(n = 3, name = "Set1"))
+
+# Explore Data, 
+randomColumns = sample(1:5000,2)
+plot(leuk[,randomColumns],col = leuk$V5001)
+
+#2d Projection
+pcaOut = prcomp(leuk[,2:5000],2, scale = F)
+plot(pcaOut$x[,1],pcaOut$x[,2],col = leuk$V5001, xlab = "Principal Component 1", ylab = "Principal Component 2", main = 'LinAlg HW')
+
+# Item Labels
+text(pcaOut$x[,1], pcaOut$x[,2], labels=(as.numeric(rownames(leuk))), data=leuk, cex=0.7, font=2)
+
