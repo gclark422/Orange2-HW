@@ -1,10 +1,3 @@
-#------------------------------------#
-#        Exponential Smoothing       #
-#               Models               #
-#                                    #
-#           Dr Susan Simmons         #
-#------------------------------------#
-
 # Needed Libraries for Analysis #
 install.packages('lubridate')
 library(haven)
@@ -77,10 +70,10 @@ summary(HWES_PA)
 View(train_results)
 View(Daily_Mean_Valid)
 
-plot(HWES.PA, main = "PM2.5 with Holt-Winters ESM Forecast", xlab = "Date", ylab = "PM2.5")
+plot(HWES_PA, main = "PM2.5 with Holt-Winters ESM Forecast", xlab = "Date", ylab = "PM2.5")
 
-autoplot(HWES.PA)+ autolayer(fitted(HWES.PA),series="Fitted")+ylab("PM2.5 with Holt-Winters ESM Forecast")
-
+autoplot(HWES_PA)+ autolayer(fitted(HWES_PA),series="Fitted")+ylab("PM2.5 with Holt-Winters ESM Forecast")
+View(HWES_PA$mean)
 # Running MAPE on the Validation Data Set
 
 DMV <- unclass(Daily_Mean_Valid)
@@ -91,8 +84,6 @@ MAPE=mean(abs(error)/abs(DMV))
 
 print(MAE)    #2.25
 print(MAPE)   #22.85%
-
-
 
 
 # Holt-Winters Multipliciative ESM
