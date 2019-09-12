@@ -27,14 +27,14 @@ months <- data.train %>%
 
 plot(months)
 
-ts.months.train <- ts(months$mean, frequency = 12)
+ts.months.train <- ts(months$mean, start=14, frequency = 12)
 plot(ts.months.train)
 
 months.valid <- data.valid %>%
   group_by(year=year(Date), month=month(Date)) %>%
   summarise(mean=mean(Daily.Mean.PM2.5.Concentration))
 
-ts.months.valid <- ts(months.valid$mean, frequency = 12)
+ts.months.valid <- ts(months.valid$mean, start = 14, frequency = 12)
 
 # Decomposition
 decomp_stl <- stl(ts.months.train, s.window=7)
@@ -60,10 +60,45 @@ autoplot(HWES.data)+
   autolayer(fitted(HWES.data),series="Fitted")
 
 
-HWES.mult.data <- hw(ts.months.train, seasonal = "multiplicative")
+HWES.mult.data <- hw(ts.months.train, h=0.5*frequency(ts.months.train), seasonal = "multiplicative")
 summary(HWES.mult.data)
 
 plot(HWES.mult.data, main = "Holt-Winters ESM Forecast - multiplicative", xlab = "Date")
+
+plot(HWES.mult.data, include = 1, PI=FALSE, main = "Holt-Winters ESM Forecast - multiplicative", xlab = "Date")
+lines(ts.months.valid)
+
+plot(ts.months.valid)
+
+df_test <- as.data.frame(HWES.mult.data)
+df_test
+
+w <- ts(HWES.mult.data)
+plot(w)
+
+ts.plot(w, gpars = list(col = c("black", "red")))
+
+HWES.mult.data$fitted
+
+df_valid <- as.data.frame(ts.months.valid)
+df_train <- as.data.frame(ts.months.train)
+
+# the plot
+ggplot() + 
+  geom_line(aes(y=df_train$x, x=seq.Date(from = as.Date("2014-01-01"), to = as.Date("2018-06-30"), by = "month")), color = 'black') + 
+  geom_line(aes(y=df_test$`Point Forecast`, x=seq.Date(from = as.Date("2018-07-01"), to = as.Date("2018-12-31"), by = "month")),color = 'red', show.legend = TRUE)+
+  geom_line(aes(y=df_valid$x, x=seq.Date(from = as.Date("2018-07-01"), to = as.Date("2018-12-31"), by = "month")),color = 'black', show.legend = TRUE) + 
+  geom_vline(xintercept=as.Date("2018-06-30"), linetype="dashed", color='red') +
+  labs(title = "Actual vs Holt-Winters Forecast", x="Time", y="Mean PM 2.5 Concentration") + 
+  theme_minimal() + 
+  theme(legend.position = "right")
+
+df_test$`Point Forecast`
+data.valid$Date
+ts.months.valid
+
+
+
 # abline(v = 2008.25, col = "red", lty = "dashed")
 autoplot(HWES.data)+
   autolayer(fitted(HWES.mult.data),series="Fitted")
