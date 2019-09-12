@@ -85,13 +85,14 @@ df_train <- as.data.frame(ts.months.train)
 
 # the plot
 ggplot() + 
-  geom_line(aes(y=df_train$x, x=seq.Date(from = as.Date("2014-01-01"), to = as.Date("2018-06-30"), by = "month")), color = 'black') + 
-  geom_line(aes(y=df_test$`Point Forecast`, x=seq.Date(from = as.Date("2018-07-01"), to = as.Date("2018-12-31"), by = "month")),color = 'red', show.legend = TRUE)+
-  geom_line(aes(y=df_valid$x, x=seq.Date(from = as.Date("2018-07-01"), to = as.Date("2018-12-31"), by = "month")),color = 'black', show.legend = TRUE) + 
+  geom_line(aes(y=df_train$x, x=seq.Date(from = as.Date("2014-01-01"), to = as.Date("2018-06-30"), by = "month")), color = 'black', size = 0.9) + 
+  geom_line(aes(y=df_test$`Point Forecast`, x=seq.Date(from = as.Date("2018-07-01"), to = as.Date("2018-12-31"), by = "month")),color = 'red', size = 0.9)+
+  geom_line(aes(y=df_valid$x, x=seq.Date(from = as.Date("2018-07-01"), to = as.Date("2018-12-31"), by = "month")),color = 'black', size = 0.9) + 
   geom_vline(xintercept=as.Date("2018-06-30"), linetype="dashed", color='red') +
-  labs(title = "Actual vs Holt-Winters Forecast", x="Time", y="Mean PM 2.5 Concentration") + 
+  labs(title = "Actual vs Holt-Winters Forecast", x="Year", y="Mean PM 2.5 Concentration (Mg/m^3)") + 
   theme_minimal() + 
-  theme(legend.position = "right")
+  theme(legend.position = "right") +
+  theme(plot.title = element_text(size=22))
 
 df_test$`Point Forecast`
 data.valid$Date
