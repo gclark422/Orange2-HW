@@ -26,12 +26,19 @@ plot(leuk[,randomColumns],col = leuk$V5001)
 #Create the first two principal components
 
 pcaOut = prcomp(leuk[,1:5000],3, scale = F)
-plot(pcaOut$x[,1],pcaOut$x[,2],col = leuk$V5001, 
-        xlab = "Principal Component 1", 
-        ylab = "Principal Component 2", 
-        main = 'Genetic Samples Projected into 2-dimensions')
-text(pcaOut$x[,1], pcaOut$x[,2], labels=(as.numeric(rownames(leuk))), 
-     data=leuk, cex=0.5, font=2)
-legend(40000, -13000, legend = c("AML", "ALL-T", "ALL_B"), 
-       col=c("green", "red", "black"), lty=1:2, cex=0.7)
-# Observation 19 is misclassified a AML(Green). Should be ALL-T (Red).
+plot(pcaOut$x[,1],pcaOut$x[,2],col = leuk$V5001, cex = 2, xlab = "Principal Component 1", ylab = "Principal Component 2", main = 'Genetic Samples Projected into 2-dimensions')
+
+############################ Using ggplot ##########################################
+library(ggplot2)
+plotdata = data.frame(
+  PC1 = pcaOut$x[,1],
+  PC2 = pcaOut$x[,2],
+  Type = leuk$V5001
+)
+
+ggplot(plotdata, aes(x = PC1, y=PC2)) + geom_point(aes(colour = Type),size=3) + 
+  scale_color_manual(values = c("ALL-B" = "black", "ALL-T" = "purple", "AML" = "green")) +
+  labs(title='Genetic Samples Projected into 2-dimensions', x='Principal Component 1', y='Principal Component 2') +
+  theme(legend.position = 'right')+
+  geom_text(aes(label=as.numeric(rownames(plotdata))),hjust=0, vjust=0, size=4)
+

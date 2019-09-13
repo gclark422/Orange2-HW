@@ -1,4 +1,4 @@
-libname logreg "C:\Users\grant\Desktop\IAA\Orange2-HW\Data\Logistic HW 2";
+libname logreg "C:\Users\97420\OneDrive\Documents\MSA Fall\Logistic Regression\Homework\Homework2_LR";
 
 /***** Check missing values ******/
 
