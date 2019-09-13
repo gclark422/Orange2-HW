@@ -8,6 +8,10 @@ proc freq data=hw2.insurance_t_bin;
 	table ins*nsfamt_bin / chisq expected cellchi2 nocol nopercent oddsratio;
 run;
 
+proc freq data=hw2.insurance_t_bin;
+	table branch;
+run;
+
 /* NSF, None missing, No Separation Concerns, MH = 43.2028, OR = 0.5555 */
 proc freq data=hw2.insurance_t_bin;
 	table ins*nsf / chisq expected cellchi2 nocol nopercent oddsratio;
@@ -98,11 +102,14 @@ quit;
 
 
 /* Forward selection on significant variables and interactions 
-New Interactions: DDA*SAVBAL_Bin CHECKS_Bin*SAVBAL_Bin SAVBAL_Bin*MM DDA*IRA */
+Significant Variables: NSF DDA DDABAL_Bin CHECKS_Bin TELLER_Bin SAVBAL_Bin CDBAL_Bin ATMAMT_Bin BRANCH MM
+IRA INV ILS CC
+New Interactions: DDABAL_Bin*SAVBAL_Bin MM*DDABAL_Bin DDA*IRA */
 proc logistic data=temp plots(only)=(oddsratio);
-	class nsf dda checks_bin(ref='1') teller_bin(ref='1') savbal_bin(ref='1') cdbal_bin(ref='1') 
-		atmamt_bin(ref='1')	branch(ref='B1') mm ira	inv(ref='-1') ils cc(ref='-1')/ param=ref; 
-	model ins(event='1') = nsf|dda|checks_bin|teller_bin|savbal_bin|cdbal_bin|atmamt_bin|branch|mm|ira|inv|ils|cc@2 / selection=forward slentry=0.002 clodds=pl clparm=pl;
+	class nsf dda ddabal_bin(ref='1') checks_bin(ref='1') teller_bin(ref='1') savbal_bin(ref='1') cdbal_bin(ref='1') 
+		atmamt_bin(ref='1')	branch(ref='B1') mm ira	inv(ref='-1') ils cc(ref='-1') 
+		/ param=ref; 
+	model ins(event='1') = nsf|dda|ddabal_bin|checks_bin|teller_bin|savbal_bin|cdbal_bin|atmamt_bin|branch|mm|ira|inv|ils|cc@2 / selection=forward slentry=0.002 clodds=pl clparm=pl;
 	title 'Modeling Purchase of Insurance Products';
 run;
 quit;
