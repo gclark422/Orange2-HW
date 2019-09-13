@@ -10,7 +10,7 @@ Fall 1 Orange 2 HW repo
 | :heavy_multiplication_x: | Logistic Regression HW 2 | 9/18     |
 | :heavy_multiplication_x: | Logistic Regression HW 3 | 9/26     |
 | :heavy_multiplication_x: | Time Series HW 1         | 9/16     |
-| :heavy_multiplication_x: | Time Series HW 2         | 9/24     |
+| :heavy_multiplication_x: | Time Series HW 2         | 9/25     |
 
 
 # Basic Setup Instructions (Command line - Use Git Bash)
