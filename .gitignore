@@ -5,7 +5,7 @@ __pycache__/
 
 # R data files
 .RData
-.RHistroy
+.Rhistroy
 
 # SAS data files
 *.sas7bdat
