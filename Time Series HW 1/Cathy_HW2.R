@@ -59,6 +59,43 @@ ts.months.train <- ts(months.train$mean, start = 2014, frequency =12)
 
 ts.months.valid <- ts(months.valid$mean, start = 2018, frequency = 12)
 
+# Min, Max, Average from 2014 - 2018
+whole <- data[data$Date >= "2014-01-01" & data$Date <= "2018-12-31",]
+
+months.whole <- whole %>%
+  group_by(year=year(Date), month=month(Date)) %>%
+  summarise(mean=mean(Daily.Mean.PM2.5.Concentration))
+
+ts.whole<- ts(months.whole$mean, start = 2014, frequency =12)
+
+min(ts.whole) # 5.5
+max(ts.whole) # 16.08
+mean(ts.whole) # 9.85
+
+min(ts.months.train) #5.5
+max(ts.months.train) #16.08
+mean(ts.months.train) #9.82
+
+# Avg prior to 2017: 10.64
+data.train.test <- data[data$Date >= "2014-01-01" & data$Date <= "2016-12-31",]
+
+months.train.test <- data.train.test %>%
+  group_by(year=year(Date), month=month(Date)) %>%
+  summarise(mean=mean(Daily.Mean.PM2.5.Concentration))
+
+avg.prior.2017 <- ts(months.train.test$mean, start = 2014, frequency =12)
+
+mean(avg.prior.2017)
+
+# Avg after 2017: 8.66
+after.2017 <- data[data$Date >= "2017-01-01" & data$Date <= "2018-12-31",]
+after <- after.2017 %>%
+  group_by(year=year(Date), month=month(Date)) %>%
+  summarise(mean=mean(Daily.Mean.PM2.5.Concentration))
+
+avg.after.2017 <- ts(after$mean, start = 2017, frequency =12)
+
+mean(avg.after.2017)
 # Time Series Decomposition ...STL#
 decomp_stl <- stl(ts.months.train, s.window = 7)
 plot(decomp_stl, main = "STL Decomposition", xlab = "Year")
