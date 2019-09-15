@@ -17,10 +17,10 @@ library(lubridate)
 library(tseries)
 
 # Set the working directory
-setwd("/Users/CathyTran/Documents/Fall I 2019/Time Series")
+setwd("C:\\Users\\grant\\Desktop\\IAA\\Orange2-HW\\Data\\Time Series HW 1\\")
 
 # Read CSV into R
-data <- read.csv(file="HW2_PM_2_5_Raleigh2.csv", header=TRUE, sep=",")
+data <- read.csv(file="PM_2_5_Raleigh2.csv", header=TRUE, sep=",")
 
 # set strings as factors to false
 options(stringsAsFactors = FALSE)
@@ -64,12 +64,12 @@ decomp_stl <- stl(ts.months.train, s.window = 7)
 plot(decomp_stl, main = "STL Decomposition", xlab = "Year")
 
 # Actual PM2.5 values overlaid with the trend/cycle component for the training set.
-plot(ts.months.train, col = "grey", main = "Monthly PM2.5 Values - Trend/Cycle", xlab = "Year", ylab = "PM2.5 (ug/m3 LC)", lwd = 2)
+plot(ts.months.train, col = "grey", main = "Monthly PM2.5 Values - Trend/Cycle", xlab = "Year", ylab = "Mean PM 2.5 Concentration (mg/m^3)", lwd = 2)
 lines(decomp_stl$time.series[,2], col = "red", lwd = 2)
 
 # Actual PM2.5 values overlaid with the seasonally adjusted PM2.5 values for the training set.
 seas_pm=ts.months.train-decomp_stl$time.series[,1]
-plot(ts.months.train, col = "grey", main = "Monthly PM2.5 Values Seasonally Adjusted", xlab = "Year", ylab = "PM2.5 (ug/m3 LC)", lwd = 2)
+plot(ts.months.train, col = "grey", main = "Monthly PM2.5 Values Seasonally Adjusted", xlab = "Year", ylab = "Mean PM 2.5 Concentration (mg/m^3)", lwd = 2)
 lines(seas_pm, col = "red", lwd = 2)
 
 # Sub-series
