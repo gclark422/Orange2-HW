@@ -3,6 +3,11 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# R data files
+.RData
+.Rhistroy
+*.Rhistory
+
 # SAS data files
 *.sas7bdat
 *.sas~
