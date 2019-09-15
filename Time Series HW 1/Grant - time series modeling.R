@@ -94,6 +94,12 @@ ggplot() +
   theme(legend.position = "right") +
   theme(plot.title = element_text(size=22))
 
+ggplot() + 
+  geom_line(aes(y=df_train$x, x=seq.Date(from = as.Date("2014-01-01"), to = as.Date("2018-06-30"), by = "month")), color = 'black', size = 0.9) + 
+  labs(title = "Mean PM 2.5 Concentration over time", x="Year", y="Mean PM 2.5 Concentration (mg/m^3)") + 
+  theme_minimal() + 
+  theme(plot.title = element_text(size=22))
+
 df_test$`Point Forecast`
 data.valid$Date
 ts.months.valid
