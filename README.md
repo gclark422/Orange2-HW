@@ -7,9 +7,9 @@ Fall 1 Orange 2 HW repo
 |--------------------------|--------------------------|----------|
 | :heavy_check_mark:       | Logistic Regression HW 1 |          |
 | :heavy_check_mark:       | Linear Algebra HW 1      |          |
+| :heavy_check_mark:       | Time Series HW 1         |          |
 | :heavy_multiplication_x: | Logistic Regression HW 2 | 9/18     |
 | :heavy_multiplication_x: | Logistic Regression HW 3 | 9/26     |
-| :heavy_multiplication_x: | Time Series HW 1         | 9/16     |
 | :heavy_multiplication_x: | Time Series HW 2         | 9/25     |
 
 
