@@ -1,9 +1,9 @@
 /* Initialize Library */
-libname hw3 "C:\Users\Asus\Documents\Learning\Advanced Analytics\Logistic Regression\Homework\Homework 2";
+libname lrhw3 "C:\Users\Asus\Documents\Learning\Advanced Analytics\Logistic Regression\Homework\Homework 2";
 
 /* Data Cleaning */
 data temp;
-	set hw3.insurance_t_bin;
+	set lrhw3.insurance_t_bin;
 	if hmown = . then hmown = -1;
 	if inv = . then inv = -1;
 	if ccpurc = . then ccpurc = -1;
@@ -13,7 +13,7 @@ data temp;
 run;
 
 data temp2;
-	set hw3.insurance_v_bin;
+	set lrhw3.insurance_v_bin;
 	if hmown = . then hmown = -1;
 	if inv = . then inv = -1;
 	if ccpurc = . then ccpurc = -1;
@@ -54,44 +54,34 @@ proc ttest data=predprobs order=data;
 	title 'Coefficient of Discrimination and Plots';
 run;
 
-/*K-S Statistic */
+/*K-S Statistic = 0.299877 */
 proc npar1way data=predprobs d plot=edfplot;
 	class ins;
 	var phat;
 run;
 
-/* Youden's Index = .447707 */
+/* Getting information for Confusion Matrix based on K-S Statistic */
 proc logistic data=temp2 plots(only)=(oddsratio);
 	class nsf dda ddabal_bin(ref='1') checks_bin(ref='1') teller_bin(ref='1') savbal_bin(ref='1') 
 	cdbal_bin(ref='1') atmamt_bin(ref='1')	branch(ref='B1') mm ira	inv(ref='-1') ils cc(ref='-1') 
 	/ param=ref; 
 	model ins(event='1') = nsf dda ddabal_bin checks_bin teller_bin savbal_bin cdbal_bin
-		atmamt_bin branch mm ira inv ils cc ddabal_bin*savbal_bin mm*ddabal_bin dda*ira / ctable pprob = 0 to 0.98 by 0.02;
+		atmamt_bin branch mm ira inv ils cc ddabal_bin*savbal_bin mm*ddabal_bin dda*ira / ctable pprob =0.299877;
 	ods output classification=classtable;
 run;
 quit;
 
-data classtable;
-	set classtable;
-	youden = sensitivity + specificity - 100;
-	drop PPV NPV Correct;
-run;
-
-proc sort data=classtable;
-	by descending youden;
-run;
-
 proc print data=classtable;
 run;
 
-/* Confusion Matrix */
+/* Confusion Matrix Accuracy = 0.6992 */
 /*********************/
-/*   Predicted */
-/*      0       1
+/*      Predicted    */
+/*       0       1
 A
-c  0   1008    209
+c   0   909     166
 t
-u  1   374     533
+u   1   473     576
 a
 l
 */
@@ -111,7 +101,7 @@ data work.roc;
 	set work.roc; 
 	cutoff = _PROB_; 
 	specif = 1-_1MSPEC_; 
-	depth=(_POS_+_FALPOS_)/742*100; 
+	depth=(_POS_+_FALPOS_)/2124*100; 
 	precision=_POS_/(_POS_+_FALPOS_); 
 	acc=_POS_+_NEG_;
 	lift=precision/0.3435; 
