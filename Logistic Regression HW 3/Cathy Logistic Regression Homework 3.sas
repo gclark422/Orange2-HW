@@ -1,41 +1,186 @@
 /* Initialize the libref */
-libname hw3 "Z:\Documents\Fall I 2019\Logistic Regression\Orange2-HW\Logistic Regression HW 2";
+libname hw3 "Z:\Documents\Fall I 2019\Logistic Regression\Homework2_LR";
 
+/* Data Cleaning */
+data train;
+	set hw3.insurance_t_bin;
+	if hmown = . then hmown = -1;
+	if inv = . then inv = -1;
+	if ccpurc = . then ccpurc = -1;
+	if cc = . then cc = -1;
+	if mmcred = 5 then mmcred = 3;
+	if cashbk = 2 then cashbk = 1;
+run;
 
-/****** Backward selection on all variables ******/
+data val;
+	set hw3.insurance_v_bin;
+	if hmown = . then hmown = -1;
+	if inv = . then inv = -1;
+	if ccpurc = . then ccpurc = -1;
+	if cc = . then cc = -1;
+	if mmcred = 5 then mmcred = 3;
+	if cashbk = 2 then cashbk = 1;
+run;
 
-/* Macro for all variables */
-%let all = nsfamt_bin nsf dirdep depamt_bin ddabal_bin dda checks_bin cashbk acctage_bin teller_bin 
-	savbal_bin sav posamt_bin pos_bin phone_bin cdbal_bin cd atmamt_bin atm res moved lores_bin 
-	inarea hmval_bin hmown crscore_bin branch age_bin mm locbal_bin loc irabal_bin ira invbal_bin inv 
-	ilsbal_bin ils sdb mtgbal_bin mtg mmcred mmbal_bin income_bin ccpurc ccbal_bin cc;
-
-/* Backward selection on all variables
-Remaining Variables:
-NSF DDABAL_Bin DDA CHECKS_Bin TELLER_Bin SAVBAL_Bin CDBAL_Bin ATMAMT_Bin BRANCH MM IRA INV ILS CC*/
-proc logistic data=hw3.insurance_t_imputed plots(only)=(oddsratio);
-	class nsfamt_bin nsf dirdep depamt_bin(ref = '1') ddabal_bin(ref='1') dda checks_bin(ref='1') 
-		cashbk acctage_bin(ref='1') teller_bin(ref='1') savbal_bin(ref='1') sav posamt_bin(ref='1') 
-		pos_bin(ref='1') phone_bin(ref='1') cdbal_bin(ref='1') cd atmamt_bin(ref='1') atm res(ref='R')
-		moved lores_bin(ref='1') inarea hmval_bin(ref='1') hmown(ref='-1') crscore_bin(ref='1') 
-		branch(ref='B1') age_bin(ref='1') mm locbal_bin(ref='1') loc irabal_bin ira invbal_bin(ref='1') 
-		inv(ref='-1') ilsbal_bin ils sdb mtgbal_bin(ref='1') mtg mmcred(ref='1') mmbal_bin income_bin(ref='1')
-		ccpurc(ref='-1') ccbal_bin(ref='1') cc(ref='-1')/ param=ref; 
-	model ins(event='1') = &all / selection=backward slstay=0.002 clodds=pl clparm=pl;
-	title 'Modeling Purchase of Insurance Products';
+/* Concordance = 80.8 and AUC = 80.85, ROC curve at bottom of output 
+17 vars significant from the forward selection w/ interactions from Phase II*/
+proc logistic data=train plots(only) = ROC;
+	class nsf dda ddabal_bin(ref='1') checks_bin(ref='1') teller_bin(ref='1') savbal_bin(ref='1') 
+	cdbal_bin(ref='1') atmamt_bin(ref='1')	branch(ref='B1') mm ira	inv(ref='-1') ils cc(ref='-1') 
+	/ param=ref; 
+	model ins(event='1') = nsf dda ddabal_bin checks_bin teller_bin savbal_bin cdbal_bin
+		atmamt_bin branch mm ira inv ils cc ddabal_bin*savbal_bin mm*ddabal_bin dda*ira / clodds=pl clparm=pl;
 run;
 quit;
 
-
-/* Forward selection on significant variables and interactions 
-Significant Variables: NSF DDA DDABAL_Bin CHECKS_Bin TELLER_Bin SAVBAL_Bin CDBAL_Bin ATMAMT_Bin BRANCH MM
-IRA INV ILS CC
-New Interactions: DDABAL_Bin*SAVBAL_Bin MM*DDABAL_Bin DDA*IRA */
-proc logistic data=hw3.insurance_t_imputed plots(only)=(oddsratio);
-	class nsf dda ddabal_bin(ref='1') checks_bin(ref='1') teller_bin(ref='1') savbal_bin(ref='1') cdbal_bin(ref='1') 
-		atmamt_bin(ref='1')	branch(ref='B1') mm ira	inv(ref='-1') ils cc(ref='-1') 
-		/ param=ref; 
-	model ins(event='1') = nsf|dda|ddabal_bin|checks_bin|teller_bin|savbal_bin|cdbal_bin|atmamt_bin|branch|mm|ira|inv|ils|cc@2 / selection=forward slentry=0.002 clodds=pl clparm=pl;
-	title 'Modeling Purchase of Insurance Products';
+/* Discrimination Slope 0.2648*/
+ods trace on;
+ods graphics on;
+proc logistic data=train noprint;
+	class nsf dda ddabal_bin(ref='1') checks_bin(ref='1') teller_bin(ref='1') savbal_bin(ref='1') 
+	cdbal_bin(ref='1') atmamt_bin(ref='1')	branch(ref='B1') mm ira	inv(ref='-1') ils cc(ref='-1') 
+	/ param=ref; 
+	model ins(event='1') = nsf dda ddabal_bin checks_bin teller_bin savbal_bin cdbal_bin
+		atmamt_bin branch mm ira inv ils cc ddabal_bin*savbal_bin mm*ddabal_bin dda*ira / clodds=pl clparm=pl;
+	output out=predprobs p=phat;
 run;
+ 
+proc sort data=predprobs;
+	by descending ins;
+run;
+
+proc ttest data=predprobs order=data;
+	ods select statistics summarypanel;
+	class ins;
+	var phat;
+	title 'Coefficient of Discrimination and Plots';
+run;
+ods trace off;
+
+/*Change the Title of the histogram*/
+
+proc template;
+   source  Stat.TTest.Graphics.Summary2;
+run;
+
+ proc template;
+define statgraph Stat.TTest.Graphics.Summary2;
+   notes
+      "Comparative histograms with normal/kernel densities and boxplots,             (two-sample)";
+   dynamic _Y1 _Y2 _Y _VARNAME _XLAB _SHORTXLAB _CLASS1 _CLASS2 _CLASSNAME _LOGNORMAL _OBSVAR
+      _byline_ _bytitle_ _byfootnote_;
+   BeginGraph;
+      entrytitle "Distribution of Parameter Estimates";
+      layout lattice / rows=3 columns=1 columndatarange=unionall rowweights=(.4 .4 .2)
+         shrinkfonts=true;
+         columnaxes;
+            columnaxis / display=(ticks tickvalues label) label=_XLAB shortlabel=_SHORTXLAB
+               griddisplay=auto_on;
+         endcolumnaxes;
+         layout overlay / xaxisopts=(display=none);
+            histogram _Y1 / binaxis=false primary=true;
+            if ((NOT EXISTS(_LOGNORMAL)) AND (NOT(EXISTS(_PAIRED) AND EXISTS(_RATIO))))
+               densityplot _Y1 / normal () name="Normal" legendlabel="Normal" lineattrs=GRAPHFIT;
+            endif;
+            densityplot _Y1 / kernel () name="Kernel" legendlabel="Kernel" lineattrs=GRAPHFIT2;
+            entry _CLASS1 / autoalign=(topleft topright top);
+         endlayout;
+         layout overlay / xaxisopts=(display=none);
+            histogram _Y2 / binaxis=false primary=true;
+            if ((NOT EXISTS(_LOGNORMAL)) AND (NOT(EXISTS(_PAIRED) AND EXISTS(_RATIO))))
+               densityplot _Y2 / normal () name="Normal" legendlabel="Normal" lineattrs=GRAPHFIT;
+            endif;
+            densityplot _Y2 / kernel () name="Kernel" legendlabel="Kernel" lineattrs=GRAPHFIT2;
+            entry _CLASS2 / autoalign=(topleft topright top);
+         endlayout;
+         columnheaders;
+            layout gridded / shrinkfonts=true;
+               discreteLegend "Normal" "Kernel" / across=4 BackgroundColor=GraphWalls:Color
+                  Opaque=true;
+            endlayout;
+         endcolumnheaders;
+         layout overlay / xaxisopts=(display=none) yaxisopts=(label=_CLASSNAME reverse=true);
+            if (EXISTS(_LOGNORMAL))
+               boxplot X=CLASS Y=_Y / orient=horizontal display=(caps fill median outliers);
+            else
+               boxplot X=CLASS Y=_Y / orient=horizontal;
+            endif;
+         endlayout;
+         columnheaders;
+            layout gridded / shrinkfonts=true;
+               discreteLegend "Normal" "Kernel" / across=4 BackgroundColor=GraphWalls:Color
+                  Opaque=true;
+            endlayout;
+         endcolumnheaders;
+      endlayout;
+      if (_BYTITLE_)
+         entrytitle _BYLINE_ / textattrs=GRAPHVALUETEXT;
+      else
+         if (_BYFOOTNOTE_)
+            entryfootnote halign=left _BYLINE_;
+         endif;
+      endif;
+   EndGraph;
+end;
+run;
+
+/* K-S Statistic 0.299877*/
+proc npar1way data=predprobs d plot=edfplot;
+	class ins;
+	var phat;
+run;
+
+/* Classification Table Using Validation Data*/
+/*Percent Concordant 82.2 */
+proc logistic data=val plots(only)=(oddsratio);
+	class nsf dda ddabal_bin(ref='1') checks_bin(ref='1') teller_bin(ref='1') savbal_bin(ref='1') 
+	cdbal_bin(ref='1') atmamt_bin(ref='1')	branch(ref='B1') mm ira	inv(ref='-1') ils cc(ref='-1') 
+	/ param=ref; 
+	model ins(event='1') = nsf dda ddabal_bin checks_bin teller_bin savbal_bin cdbal_bin
+		atmamt_bin branch mm ira inv ils cc ddabal_bin*savbal_bin mm*ddabal_bin dda*ira / ctable pprob =0.299877;
+	ods output classification=classtable;
+	title 'Modeling Insurance Products';
+run;
+quit;
+
+proc print data=classtable;
+run;
+
+/* Lift Chart Validation Data */
+/*Total 0's & 1's in the validation data 2124*/
+/*Population proportion of 1 in training data set .3493*/
+proc freq data=val;
+	tables ins;
+run;
+
+proc logistic data=train plots(only)=(oddsratio);
+	class nsf dda ddabal_bin(ref='1') checks_bin(ref='1') teller_bin(ref='1') savbal_bin(ref='1') 
+	cdbal_bin(ref='1') atmamt_bin(ref='1')	branch(ref='B1') mm ira	inv(ref='-1') ils cc(ref='-1') 
+	/ param=ref; 
+	model ins(event='1') = nsf dda ddabal_bin checks_bin teller_bin savbal_bin cdbal_bin
+		atmamt_bin branch mm ira inv ils cc ddabal_bin*savbal_bin mm*ddabal_bin dda*ira / clodds=pl clparm=pl;
+	score data=val fitstat outroc=roc;
+run;
+quit;
+
+data work.roc; 
+	set work.roc; 
+	cutoff = _PROB_; 
+	specif = 1-_1MSPEC_; 
+	depth=(_POS_+_FALPOS_)/2124*100; 
+	precision=_POS_/(_POS_+_FALPOS_); 
+	acc=_POS_+_NEG_;
+	lift=precision/0.3493; 
+run;
+
+
+
+/*Lift Plot*/
+proc sgplot data=work.roc; 
+	series y=lift x=depth; 
+	refline 1.0 / axis=y; 
+	title1 "Lift Chart for Training Data"; 
+	xaxis label="Depth (%)";
+	yaxis label="Lift";
+run; 
 quit;
