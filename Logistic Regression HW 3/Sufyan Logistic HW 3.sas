@@ -107,6 +107,11 @@ data work.roc;
 	lift=precision/0.3435; 
 run;
 
+/* Lift plot
+Interpretation? Targeting the top 20% of customers, based on predictive probability,
+ get about 2 times as many responses (insurance purchases?) compared to targeting a random sample 
+ of 20% of customers. */
+
 proc sgplot data=work.roc;
 	series y=lift x=depth; 
 	refline 1.0 / axis=y; 
