@@ -74,14 +74,14 @@ quit;
 proc print data=classtable;
 run;
 
-/* Confusion Matrix Accuracy = 0.6992 */
+/* Confusion Matrix - Accuracy = 0.6992 */
 /*********************/
 /*      Predicted    */
 /*       0       1
 A
-c   0   909     166
+c   0   909     473
 t
-u   1   473     576
+u   1   166     576
 a
 l
 */
@@ -101,7 +101,7 @@ data work.roc;
 	set work.roc; 
 	cutoff = _PROB_; 
 	specif = 1-_1MSPEC_; 
-	depth=(_POS_+_FALPOS_)/2124*100; 
+	depth=(_POS_+_FALPOS_)/1049*100; 
 	precision=_POS_/(_POS_+_FALPOS_); 
 	acc=_POS_+_NEG_;
 	lift=precision/0.3435; 
@@ -109,7 +109,7 @@ run;
 
 /* Lift plot
 Interpretation? Targeting the top 20% of customers, based on predictive probability,
- get about 2 times as many responses (insurance purchases?) compared to targeting a random sample 
+ gets over 2 times as many responses (insurance purchases?) compared to targeting a random sample 
  of 20% of customers. */
 
 proc sgplot data=work.roc;
