@@ -44,8 +44,19 @@ proc arima data=tshw3.training2 plot(unpack)=all;
 run;
 quit;
 
+/* Trend line accounted for with AR(1) based on PACF - White Noise!!! SBC = 228.9375 */
+proc arima data=tshw3.training2 plot(unpack)=all;
+	identify var=mean_concentration crosscorr=id nlag=10;
+	estimate p=1 q=1 input=id method=ML;
+run;
+quit;
 
-
+/* Trend line accounted for with MA(1) based on ACF - White Noise!!! SBC = 224.9831 */
+proc arima data=tshw3.training2 plot(unpack)=all;
+	identify var=mean_concentration crosscorr=id nlag=10;
+	estimate q=1 input=id method=ML;
+run;
+quit;
 
 
 
