@@ -22,6 +22,19 @@ data val;
 	if cashbk = 2 then cashbk = 1;
 run;
 
+proc freq data=val;
+	tables (NSFAMT_Bin NSF DIRDEP DEPAMT_Bin DDABAL_Bin DDA CHECKS_Bin CASHBK ACCTAGE_Bin TELLER_bin SAVBAL_bin SAV
+			POSAMT_bin POS_bin PHONE_bin CDBAL_bin CD ATMAMT_bin ATM RES MOVED LORES_bin INAREA HMVAL_bin
+			HMOWN CRSCORE_bin BRANCH AGE_bin MM LOCBAL_Bin LOC IRABAL_Bin IRA INVBAL_Bin INV ILSBAL_Bin ILS SDB MTGBAL_Bin
+			MTG MMCRED MMBAL_Bin INCOME_Bin CCPURC CCBAL_Bin CC)* INS;
+run;
+
+/*Check for quasi-separtion in validation data among vars in the final model*/
+proc freq data=val;
+	tables (nsf dda ddabal_bin checks_bin teller_bin savbal_bin cdbal_bin
+		atmamt_bin branch mm ira inv ils cc ddabal_bin*savbal_bin mm*ddabal_bin dda*ira) *ins;
+run;
+
 /* Concordance = 80.8 and AUC = 80.85, ROC curve at bottom of output 
 17 vars significant from the forward selection w/ interactions from Phase II*/
 proc logistic data=train plots(only) = ROC;
