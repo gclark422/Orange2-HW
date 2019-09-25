@@ -192,7 +192,7 @@ run;
 proc sgplot data=work.roc; 
 	series y=lift x=depth; 
 	refline 1.0 / axis=y; 
-	title1 "Lift Chart for Training Data"; 
+	title1 "Lift Chart for Validation Data"; 
 	xaxis label="Depth (%)";
 	yaxis label="Lift";
 run; 

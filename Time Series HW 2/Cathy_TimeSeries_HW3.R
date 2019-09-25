@@ -90,8 +90,8 @@ plot(arima.trend$residuals[1:54], xlab='Number of Observations',ylab='Residuals'
 # Stationary about the Trend because we know there is NO random walk
 
 # Ljung-Box Test No MA or AR term#
-Acf(arima.trend$residuals, lag=10,main = "")$acf
-Pacf(arima.trend$residuals, lag=10, main = "")$acf
+Acf(arima.trend$residuals, lag=10,main = " Autocorrelation Plot")$acf
+Pacf(arima.trend$residuals, lag=10, main = "Partial Correlation Plot")$acf
 
 White.LB <- rep(NA, 10)
 for(i in 1:10){
@@ -128,8 +128,8 @@ months.valid$mean - arima.forecast$pred
 
 # Check residuals for white noise AR(1)
 # Ljung-Box Test We have white noise now#
-Acf(arima.trend1$residuals, lag=10,main = "")$acf
-Pacf(arima.trend1$residuals, lag=10, main = "")$acf
+Acf(arima.trend1$residuals, lag=10,main = "AR(1)")$acf
+Pacf(arima.trend1$residuals, lag=10, main = "AR(1)")$acf
 
 White.LB <- rep(NA, 10)
 for(i in 1:10){
@@ -151,8 +151,8 @@ ma.arima1=Arima(ts.months.train, xreg=x,order=c(0,0,1))
 
 # Check residuals for white noise MA(1)
 # Ljung-Box Test We have white noise now#
-Acf(ma.arima1$residuals, lag=10,main = "")$acf
-Pacf(ma.arima1$residuals, lag=10, main = "")$acf
+Acf(ma.arima1$residuals, lag=10,main = "MA(1)")$acf
+Pacf(ma.arima1$residuals, lag=10, main = "MA(1)")$acf
 
 White.LB <- rep(NA, 10)
 for(i in 1:10){
